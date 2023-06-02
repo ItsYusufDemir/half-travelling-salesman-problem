@@ -21,6 +21,9 @@ public class HalfTsp {
     private static int yGridSize;
     private static int numberOfAreas;
     private static boolean isRemoved[];
+   private static int minDistance = Integer.MAX_VALUE;
+   private static int[] route;
+
 
     public static void main(String[] args) throws Exception {
 
@@ -31,7 +34,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
 
         try {
-            File inputFile = new File("example-input-3.txt");
+            File inputFile = new File("example-input-1.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -76,11 +79,10 @@ public class HalfTsp {
         int lowerLimit = 0;
         double averageDensity = 0;
         int numberOfCityEliminated = 0;
-        int minDistance = Integer.MAX_VALUE;
         double eliminatePercentage = 0;
-        int route[] = new int[halfNumberOfCities];
+         route = new int[halfNumberOfCities];
         int lastNumberOfAreas = numberOfAreas;
-
+        int[] currentRoute = null;
 
         //You should add here a for loop and change the lower limit by constant factor: 1.5std, 1.25std, etc
         do {
@@ -161,7 +163,7 @@ public class HalfTsp {
 
 
             // Applying the nearest neighbor algorithm
-            int currentRoute[] = new int[halfNumberOfCities];
+            currentRoute = new int[halfNumberOfCities];
 
 
             //Choosing the first city and adding it into the route
@@ -197,7 +199,6 @@ public class HalfTsp {
             }
 
 
-
             file = new FileWriter("data.txt");
 
 
@@ -213,7 +214,6 @@ public class HalfTsp {
         } while(numberOfAreas > 0);
 
 
-
         System.out.println("Input Data Statistics: ");
         System.out.println("------------------------");
         System.out.println("Map divided into " + lastNumberOfAreas + "x" + lastNumberOfAreas + " areas.");
@@ -223,6 +223,8 @@ public class HalfTsp {
         System.out.println("Number of city eliminated: " + numberOfCityEliminated + " (" + eliminatePercentage + "%)");
         System.out.println("\nRoute distance: " + minDistance);
 
+        int opt2_Distance = Opt_2();
+        System.out.println("---------------------------" + opt2_Distance + "----------------------------");
 
 
         try {
@@ -230,6 +232,7 @@ public class HalfTsp {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
 
 
 
@@ -438,7 +441,60 @@ public class HalfTsp {
 
     }
 
+    public static int[] swap_2_Points(int [] currentRoute, int i, int j){
+        int[] newRoute = new int[currentRoute.length];
+
+        for(int a = 0 ; a < i ; a++){
+            newRoute[a] = currentRoute[a];
+        }
+
+        for(int b = j+1 ; b < currentRoute.length ; b++){
+            newRoute[b] = currentRoute[b];
+        }
+
+        int reverse = 0;
+        for(int c = i ; c <= j ; c++){
+            newRoute[c] = currentRoute[j-reverse];
+            reverse++;
+        }
 
 
+        return newRoute;
+    }
 
+
+    public static int Opt_2() {
+        int newDistance = 0;
+        int numberOfSwaps = 1;
+        int temp;
+        int[] newRoute;
+
+        while (numberOfSwaps != 0) {
+            numberOfSwaps = 0;
+            for (int i = 1; i < route.length - 2; i++) {
+                for (int j = i + 1; j < route.length - 1; j++) {
+                    if (findDistance(route[i], route[i - 1]) + findDistance(route[j + 1],
+                            route[j]) >= findDistance(route[i], route[j + 1]) + findDistance(
+                            route[i - 1], route[j])) {
+
+                        newRoute = swap_2_Points(route,i,j);
+
+                        for(int k  = 0; k < route.length-1 ; k++){
+                            newDistance += findDistance(newRoute[k],newRoute[k+1]);
+                        }
+                       newDistance += findDistance(route[0], route[route.length -1]);
+                        if (newDistance < minDistance) {
+                            minDistance = newDistance;
+                            route = newRoute;
+                            numberOfSwaps++;
+                            System.out.println("*" + minDistance);
+
+                        }
+                    }
+                    newDistance = 0;
+                }
+            }
+        }
+        return minDistance;
+    }
 }
