@@ -34,7 +34,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
 
         try {
-            File inputFile = new File("example-input-1.txt");
+            File inputFile = new File("50thousand.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -85,153 +85,190 @@ public class HalfTsp {
         int[] currentRoute = null;
 
         //You should add here a for loop and change the lower limit by constant factor: 1.5std, 1.25std, etc
-        do {
 
-            //Remove the cities as they visited, store that information into an array
-            isRemoved = new boolean[numberOfCities];
-            for(int i = 0; i < numberOfCities; i++)
-                isRemoved[i] = false;
+        double stdFactor = 2;
+        double decreaseFactor = 0.1;
+        int decreaseArea = (int) Math.ceil(numberOfAreas * 0.01);
+        int counter = 0;
+        System.out.print("Preprocessing data and applying the nearest neighbor algorithm... ");
+        while(stdFactor >= 1) {
 
-            xGridSize = (maxX - minX) / numberOfAreas + 1;
-            yGridSize = (maxY - minY) / numberOfAreas + 1;
-            areas = new ArrayList[numberOfAreas][numberOfAreas];
+            numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2));
+            int processed = 0;
+            int total = numberOfAreas;
+            double progress = 0;
 
-            //Initialize the 2D array
-            for (int i = 0; i < numberOfAreas; i++) {
-                for (int j = 0; j < numberOfAreas; j++)
-                    areas[i][j] = new ArrayList<>();
-            }
+            do {
 
+                //Remove the cities as they visited, store that information into an array
+                isRemoved = new boolean[numberOfCities];
+                for (int i = 0; i < numberOfCities; i++)
+                    isRemoved[i] = false;
 
-            //Add the cities to appropriate areas
-            for (int i = 0; i < numberOfCities; i++) {
-                int xCoordinate = cities.get(i)[0];
-                int yCoordinate = cities.get(i)[1];
+                xGridSize = (maxX - minX) / numberOfAreas + 1;
+                yGridSize = (maxY - minY) / numberOfAreas + 1;
+                areas = new ArrayList[numberOfAreas][numberOfAreas];
 
-                int xIndex = xCoordinate / xGridSize;
-                int yIndex = yCoordinate / yGridSize;
-
-                areas[xIndex][yIndex].add(i);
-            }
-
-
-            //Calculate the standard deviation
-            int mostIntense = 0;
-            double currentAverageDensity = (double) numberOfCities / (numberOfAreas * numberOfAreas);
-            double sumOfSquare = 0;
-
-            for (int i = 0; i < numberOfAreas; i++) {
-
-                for (int j = 0; j < numberOfAreas; j++) {
-
-                    int currentSize = areas[i][j].size();
-
-                    if (currentSize > mostIntense)
-                        mostIntense = currentSize;
-
-                    sumOfSquare += Math.pow((currentSize - currentAverageDensity), 2);
-
+                //Initialize the 2D array
+                for (int i = 0; i < numberOfAreas; i++) {
+                    for (int j = 0; j < numberOfAreas; j++)
+                        areas[i][j] = new ArrayList<>();
                 }
-            }
-
-            double currentStandardDeviation = Math.sqrt(sumOfSquare / numberOfCities);
-
-            int currentLowerLimit = (int) Math.floor(currentAverageDensity - 1.5 * currentStandardDeviation);
-            int currentNumberOfCityEliminated = 0;
 
 
-            //Eliminate the cities below the limit
-            for (int i = 0; i < numberOfAreas; i++) {
+                //Add the cities to appropriate areas
+                for (int i = 0; i < numberOfCities; i++) {
+                    int xCoordinate = cities.get(i)[0];
+                    int yCoordinate = cities.get(i)[1];
 
-                for (int j = 0; j < numberOfAreas; j++) {
+                    int xIndex = xCoordinate / xGridSize;
+                    int yIndex = yCoordinate / yGridSize;
 
-                    if (areas[i][j].size() <= currentLowerLimit) {
-                        eliminateArea(i,j);
-                        currentNumberOfCityEliminated += areas[i][j].size();
+                    areas[xIndex][yIndex].add(i);
+                }
+
+
+                //Calculate the standard deviation
+                int mostIntense = 0;
+                double currentAverageDensity = (double) numberOfCities / (numberOfAreas * numberOfAreas);
+                double sumOfSquare = 0;
+
+                for (int i = 0; i < numberOfAreas; i++) {
+
+                    for (int j = 0; j < numberOfAreas; j++) {
+
+                        int currentSize = areas[i][j].size();
+
+                        if (currentSize > mostIntense)
+                            mostIntense = currentSize;
+
+                        sumOfSquare += Math.pow((currentSize - currentAverageDensity), 2);
+
                     }
                 }
 
-            }
+                double currentStandardDeviation = Math.sqrt(sumOfSquare / numberOfCities);
 
-            double currentEliminatePercentage = ((double)currentNumberOfCityEliminated/numberOfCities)*100;
-
-
-            if(currentEliminatePercentage >= 50) {
-                numberOfAreas--;
-                continue;
-            }
+                int currentLowerLimit = (int) Math.floor(currentAverageDensity - stdFactor * currentStandardDeviation);
+                int currentNumberOfCityEliminated = 0;
 
 
-            // Applying the nearest neighbor algorithm
-            currentRoute = new int[halfNumberOfCities];
+                //Eliminate the cities below the limit
+                for (int i = 0; i < numberOfAreas; i++) {
+
+                    for (int j = 0; j < numberOfAreas; j++) {
+
+                        if (areas[i][j].size() <= currentLowerLimit) {
+                            eliminateArea(i, j);
+                            currentNumberOfCityEliminated += areas[i][j].size();
+                        }
+                    }
+
+                }
+
+                double currentEliminatePercentage = ((double) currentNumberOfCityEliminated / numberOfCities) * 100;
 
 
-            //Choosing the first city and adding it into the route
-            int startingCity = findStartingCity(0,0, numberOfAreas -1, numberOfAreas -1);
-            isRemoved[startingCity] = true;
-            currentRoute[0] = startingCity;
+                if (currentEliminatePercentage >= 50) {
+                    numberOfAreas--;
+                    continue;
+                }
 
 
-            int currentDistance = 0;
-
-            for(int i = 1; i < halfNumberOfCities; i++){
-
-                int newCity = findNearestNeighbor(startingCity);
-                isRemoved[newCity] = true;
-                currentDistance += findDistance(startingCity, newCity);
-                startingCity = newCity;
-                currentRoute[i] = newCity;
-            }
-
-            currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities -1]); //Going back to where we started
+                // Applying the nearest neighbor algorithm
+                currentRoute = new int[halfNumberOfCities];
 
 
-            if(currentDistance < minDistance) {
-                standardDeviation = currentStandardDeviation;
-                lowerLimit = currentLowerLimit;
-                averageDensity = currentAverageDensity;
-                numberOfCityEliminated = currentNumberOfCityEliminated;
-                eliminatePercentage = currentEliminatePercentage;
-                minDistance = currentDistance;
-                lastNumberOfAreas = numberOfAreas;
-
-                route = currentRoute;
-            }
+                //Choosing the first city and adding it into the route
+                int startingCity = findStartingCity(0, 0, numberOfAreas - 1, numberOfAreas - 1);
+                isRemoved[startingCity] = true;
+                currentRoute[0] = startingCity;
 
 
-            file = new FileWriter("data.txt");
+                int currentDistance = 0;
+
+                for (int i = 1; i < halfNumberOfCities; i++) {
+
+                    int newCity = findNearestNeighbor(startingCity);
+                    isRemoved[newCity] = true;
+                    currentDistance += findDistance(startingCity, newCity);
+                    startingCity = newCity;
+                    currentRoute[i] = newCity;
+                }
+
+                currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Going back to where we started
 
 
-            for(int i = 0; i < halfNumberOfCities; i++){
-                file.write(cities.get(route[i])[0] + " " + cities.get(route[i])[1] + "\n");
-            }
-            file.close();
+                if (currentDistance < minDistance) {
+                    standardDeviation = currentStandardDeviation;
+                    lowerLimit = currentLowerLimit;
+                    averageDensity = currentAverageDensity;
+                    numberOfCityEliminated = currentNumberOfCityEliminated;
+                    eliminatePercentage = currentEliminatePercentage;
+                    minDistance = currentDistance;
+                    lastNumberOfAreas = numberOfAreas;
+
+                    route = currentRoute;
+                }
+
+
+                file = new FileWriter("data.txt");
+
+
+                for (int i = 0; i < halfNumberOfCities; i++) {
+                    file.write(cities.get(route[i])[0] + " " + cities.get(route[i])[1] + "\n");
+                }
+                file.close();
+
+
+                numberOfAreas = numberOfAreas - decreaseArea;
+
+                if(processed/(double)total >= progress){
+                    System.out.printf("Processing: %d/%d %.2f%%\n", counter + 1, (int)(1/decreaseFactor), (processed/(double)total) * 100);
+                    processed = processed + decreaseArea;
+                    progress += 0.01;
+                }
 
 
 
-            numberOfAreas--;
 
-        } while(numberOfAreas > 0);
+            } while (numberOfAreas > 0);
+
+            counter++;
+            stdFactor -= decreaseFactor; //Decrease the standard deviation factor by decrease factor
+        }
+        System.out.println("Best route is found.\n");
 
 
         System.out.println("Input Data Statistics: ");
         System.out.println("------------------------");
         System.out.println("Map divided into " + lastNumberOfAreas + "x" + lastNumberOfAreas + " areas.");
-        System.out.println("Average density: " + ((int)(averageDensity * 100) / 100.0));
+        System.out.println("Average density: " + ((int)(averageDensity * 100) / 100.0) + " city/area");
         System.out.println("Standard deviation: " + ((int)(standardDeviation * 100)) / 100.0);
-        System.out.println("Lower limit: " + lowerLimit);
-        System.out.println("Number of city eliminated: " + numberOfCityEliminated + " (" + eliminatePercentage + "%)");
+        System.out.println("Lower limit: " + lowerLimit + " city/area");
+        System.out.println("Number of city eliminated: " + numberOfCityEliminated + " (" + ((int)(eliminatePercentage * 100))/100.0+ "%)");
         System.out.println("\nRoute distance: " + minDistance);
 
+
+        System.out.println("\n\nOptimizing the results...");
+        System.out.println("Applying the 2-opt algorithm...");
         int opt2_Distance = Opt_2();
-        System.out.println("---------------------------" + opt2_Distance + "----------------------------");
+        System.out.println("\n2-opt optimized distance: " + opt2_Distance);
 
 
         try {
-            file = new FileWriter("route.txt");
+            file2 = new FileWriter("output.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+        file2.write(minDistance + "\n");
+        for(int i = 0; i < halfNumberOfCities; i++){
+            file2.write(route[i] + "\n");
+        }
+
+        file2.close();
 
 
 
@@ -373,7 +410,7 @@ public class HalfTsp {
     public static int findDistance(int city1, int city2){
 
         int x = cities.get(city1)[0];
-        int y = cities.get(city2)[1];
+        int y = cities.get(city1)[1];
 
         int x1 = cities.get(city2)[0];
         int y1 = cities.get(city2)[1];
@@ -487,7 +524,7 @@ public class HalfTsp {
                             minDistance = newDistance;
                             route = newRoute;
                             numberOfSwaps++;
-                            System.out.println("*" + minDistance);
+                            //System.out.println("*" + minDistance);
 
                         }
                     }
