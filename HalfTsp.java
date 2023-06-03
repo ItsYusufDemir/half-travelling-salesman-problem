@@ -1,3 +1,13 @@
+/* Authors: Eren Duyuk - 150120509
+ *          Selin Aydın - 150120061
+ *          Yusuf Demir - 150120032
+ *
+ * Date: 31.05.2023 14:27
+ *
+ * Description: Solving the half travelling salesman problem. This problem is different than the normal tsp problem.
+ * Given n cities, we should find the best route by choosing n/2 cities.
+ */
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,8 +31,8 @@ public class HalfTsp {
     private static int yGridSize;
     private static int numberOfAreas;
     private static boolean isRemoved[];
-   private static int minDistance = Integer.MAX_VALUE;
-   private static int[] route;
+    private static int minDistance = Integer.MAX_VALUE;
+    private static int[] route;
 
 
     public static void main(String[] args) throws Exception {
@@ -34,7 +44,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
 
         try {
-            File inputFile = new File("50thousand.txt");
+            File inputFile = new File("example-input-3.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -68,7 +78,7 @@ public class HalfTsp {
         }
 
 
-        numberOfCities = cities.size();
+        numberOfCities = cities.size();  // Number of cities is found
         halfNumberOfCities = (int) Math.ceil(numberOfCities / 2.0);
 
 
@@ -80,18 +90,25 @@ public class HalfTsp {
         double averageDensity = 0;
         int numberOfCityEliminated = 0;
         double eliminatePercentage = 0;
-         route = new int[halfNumberOfCities];
+        route = new int[halfNumberOfCities];
         int lastNumberOfAreas = numberOfAreas;
         int[] currentRoute = null;
 
-        //You should add here a for loop and change the lower limit by constant factor: 1.5std, 1.25std, etc
 
+
+        final double STANDARD_FACTOR = 0.1;
         double stdFactor = 2;
-        double decreaseFactor = 0.1;
         int decreaseArea = (int) Math.ceil(numberOfAreas * 0.01);
         int counter = 0;
         System.out.print("Preprocessing data and applying the nearest neighbor algorithm... ");
-        while(stdFactor >= 1) {
+
+        /* Here we apply the nearest neighbor algorithm. Data is chosen by eliminating some of them.
+         * In the first place, we divide our map into areas. As a beginning, we set the number of columns and number of rows
+         * as sqrt(n/2). Then we find sum of the number of cities for each areas. Then we find the standard deviation and eliminte the
+         * average + standardFactor * standardDeviation, for example: average + 1.5standardDeviation
+         * We try to find the best standardFactor and best division of areas for the given map.
+         */
+        while(stdFactor >= 1) { //Loop that controls the standard deviation factor
 
             numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2));
             int processed = 0;
@@ -169,7 +186,7 @@ public class HalfTsp {
                 double currentEliminatePercentage = ((double) currentNumberOfCityEliminated / numberOfCities) * 100;
 
 
-                if (currentEliminatePercentage >= 50) {
+                if (currentEliminatePercentage >= 50) { //If we eliminate more than 50% of the data, then continue to next iteration
                     numberOfAreas--;
                     continue;
                 }
@@ -188,16 +205,14 @@ public class HalfTsp {
                 int currentDistance = 0;
 
                 for (int i = 1; i < halfNumberOfCities; i++) {
-
                     int newCity = findNearestNeighbor(startingCity);
-                    isRemoved[newCity] = true;
+                    isRemoved[newCity] = true; //Eliminate the city that we found
                     currentDistance += findDistance(startingCity, newCity);
                     startingCity = newCity;
-                    currentRoute[i] = newCity;
+                    currentRoute[i] = newCity; //Add the found city into the route array
                 }
 
-                currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Going back to where we started
-
+                currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Add the distance where we stop and where we begin
 
                 if (currentDistance < minDistance) {
                     standardDeviation = currentStandardDeviation;
@@ -212,33 +227,27 @@ public class HalfTsp {
                 }
 
 
-                file = new FileWriter("data.txt");
 
-
-                for (int i = 0; i < halfNumberOfCities; i++) {
-                    file.write(cities.get(route[i])[0] + " " + cities.get(route[i])[1] + "\n");
-                }
-                file.close();
-
-
+                /*Decrease the number of areas by 1% of the sqrt(n/2).
+                 *We might decrease it by 1 to get a better result, but it takes too much time for large inputs
+                 */
                 numberOfAreas = numberOfAreas - decreaseArea;
 
+                //Print the processed percentage for user information
                 if(processed/(double)total >= progress){
-                    System.out.printf("Processing: %d/%d %.2f%%\n", counter + 1, (int)(1/decreaseFactor), (processed/(double)total) * 100);
+                    System.out.printf("Processing: %d/%d %.2f%%\n", counter + 1, (int)(1/STANDARD_FACTOR), (processed/(double)total) * 100);
                     processed = processed + decreaseArea;
                     progress += 0.01;
                 }
 
 
-
-
             } while (numberOfAreas > 0);
 
             counter++;
-            stdFactor -= decreaseFactor; //Decrease the standard deviation factor by decrease factor
+            stdFactor -= STANDARD_FACTOR; //Decrease the standard deviation factor by decrease factor
         }
-        System.out.println("Best route is found.\n");
 
+        System.out.println("Best route is found.\n");
 
         System.out.println("Input Data Statistics: ");
         System.out.println("------------------------");
@@ -256,20 +265,28 @@ public class HalfTsp {
         System.out.println("\n2-opt optimized distance: " + opt2_Distance);
 
 
+        //PRINTING THE RESULTS TO FILE
         try {
             file2 = new FileWriter("output.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        try {
+            file = new FileWriter("data.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+
+        //Print the output as, distance of the route and the cities that we visited
         file2.write(minDistance + "\n");
         for(int i = 0; i < halfNumberOfCities; i++){
             file2.write(route[i] + "\n");
+            file.write( cities.get(route[i])[0] + " " + cities.get(route[i])[1] + "\n");
         }
-
+        file.close();
         file2.close();
-
 
 
 
