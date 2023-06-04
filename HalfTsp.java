@@ -17,12 +17,13 @@ import java.util.Scanner;
 
 public class HalfTsp {
 
-    static int numberOfCities = 0;
-    static int halfNumberOfCities;
-    static int maxX = 0;
-    static int minX = 0;
-    static int maxY = 0;
-    static int minY = 0;
+    private static int numberOfCities = 0;
+    private static int halfNumberOfCities;
+    private static int maxX = 0;
+    private static int minX = 0;
+    private static int maxY = 0;
+    private static int minY = 0;
+    private static File inputFile;
     private static FileWriter file;
     private static FileWriter file2;
     private static ArrayList<Integer>[][] areas;
@@ -44,7 +45,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
 
         try {
-            File inputFile = new File("example-input-3.txt");
+            inputFile = new File("example-input-3.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -267,13 +268,14 @@ public class HalfTsp {
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file2 = new FileWriter("output.txt");
+            file2 = new FileWriter(inputFile.getName().split("\\.")[0] + "-processed.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+
         try {
-            file = new FileWriter("data.txt");
+            file = new FileWriter("data.txt"); //We write the x and y values of chosen cities to see the distribution in Excel
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -287,7 +289,6 @@ public class HalfTsp {
         }
         file.close();
         file2.close();
-
 
 
 
@@ -498,11 +499,11 @@ public class HalfTsp {
     public static int[] swap_2_Points(int [] currentRoute, int i, int j){
         int[] newRoute = new int[currentRoute.length];
 
-        for(int a = 0 ; a < i ; a++){
+        for(int a = 0 ; a < i ; a++){ //Take the route from 0 to ith city
             newRoute[a] = currentRoute[a];
         }
 
-        for(int b = j+1 ; b < currentRoute.length ; b++){
+        for(int b = j+1 ; b < currentRoute.length ; b++){ //Take the route from
             newRoute[b] = currentRoute[b];
         }
 
