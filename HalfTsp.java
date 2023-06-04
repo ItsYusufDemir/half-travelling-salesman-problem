@@ -45,7 +45,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
 
         try {
-            inputFile = new File("example-input-3.txt");
+            inputFile = new File("example-input-1.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -499,16 +499,16 @@ public class HalfTsp {
     public static int[] swap_2_Points(int [] currentRoute, int i, int j){
         int[] newRoute = new int[currentRoute.length];
 
-        for(int a = 0 ; a < i ; a++){ //Take the route from 0 to ith city
+        for(int a = 0 ; a <= i ; a++){ //Take the route from 0 to ith city
             newRoute[a] = currentRoute[a];
         }
 
-        for(int b = j+1 ; b < currentRoute.length ; b++){ //Take the route from
+        for(int b = j+1 ; b < currentRoute.length ; b++){ //Take the route from j+1th city to last city
             newRoute[b] = currentRoute[b];
         }
 
         int reverse = 0;
-        for(int c = i ; c <= j ; c++){
+        for(int c = i + 1 ; c < j ; c++){  //Take the cities in reverse from ith to jth city
             newRoute[c] = currentRoute[j-reverse];
             reverse++;
         }
@@ -552,4 +552,83 @@ public class HalfTsp {
         }
         return minDistance;
     }
+
+    public static int[] swap_3_Points_3(int [] currentRoute, int i, int j,int k){
+        int[] newRoute = new int[currentRoute.length];
+
+        for(int a = 0 ; a <= i-1 ; a++){
+            newRoute[a] = currentRoute[a];
+        }
+
+        int index = 0;
+        for(int a = j+1 ; a <= k ; a++){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = j ; a >= i ; a--){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = k+1 ; a<currentRoute.length ; a++ ){
+            newRoute[a] = currentRoute[a];
+        }
+
+        return newRoute;
+    }
+
+    public static int[] swap_3_Points_1(int [] currentRoute, int i, int j,int k){
+        int[] newRoute = new int[currentRoute.length];
+
+        for(int a = 0 ; a <= i-1 ; a++){
+            newRoute[a] = currentRoute[a];
+        }
+
+        int index = 0;
+        for(int a = k ; a >= j+1 ; a--){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = i ; a <= j ; a++){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = k+1 ; a<currentRoute.length ; a++ ){
+            newRoute[a] = currentRoute[a];
+        }
+
+        return newRoute;
+    }
+
+
+    public static int[] swap_3_Points_2(int [] currentRoute, int i, int j,int k){
+        int[] newRoute = new int[currentRoute.length];
+
+        for(int a = 0 ; a <= i-1 ; a++){
+            newRoute[a] = currentRoute[a];
+        }
+
+        int index = 0;
+        for(int a = j+1 ; a <= k ; a++){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = i ; a <= j ; a++){
+            newRoute[i+index] = currentRoute[a];
+            index++;
+        }
+
+        for(int a = k+1 ; a <currentRoute.length ; a++ ){
+            newRoute[a] = currentRoute[a];
+        }
+
+        return newRoute;
+    }
+
+
+
 }
