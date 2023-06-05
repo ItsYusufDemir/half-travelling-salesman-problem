@@ -253,18 +253,6 @@ public class HalfTsp {
         System.out.println("\nRoute distance: " + minDistance);
 
 
-        /*
-        System.out.println("\n\nOptimizing the results...");
-        System.out.println("Applying the 2-opt algorithm...");
-        int opt2_Distance = Opt_2();
-        System.out.println("\n2-opt optimized distance: " + opt2_Distance);
-        */
-
-
-        System.out.println("\n\nOptimizing the results...");
-        System.out.println("Applying the 3-opt algorithm...");
-        int opt3_Distance = Opt_3();
-        System.out.println("\n3-opt optimized distance: " + opt3_Distance);
 
 
         //PRINTING THE RESULTS TO FILE
@@ -290,6 +278,21 @@ public class HalfTsp {
         }
         file.close();
         file2.close();
+
+
+        /*
+        System.out.println("\n\nOptimizing the results...");
+        System.out.println("Applying the 2-opt algorithm...");
+        int opt2_Distance = Opt_2();
+        System.out.println("\n2-opt optimized distance: " + opt2_Distance);
+        */
+
+        /*
+        System.out.println("\n\nOptimizing the results...");
+        System.out.println("Applying the 3-opt algorithm...");
+        int opt3_Distance = Opt_3();
+        System.out.println("\n3-opt optimized distance: " + opt3_Distance);
+        */
 
 
 
