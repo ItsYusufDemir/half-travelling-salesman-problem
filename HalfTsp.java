@@ -9,10 +9,7 @@
  */
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class HalfTsp {
@@ -28,8 +25,8 @@ public class HalfTsp {
     private static FileWriter file2;
     private static ArrayList<Integer>[][] areas;
     private static ArrayList<int []> cities;
-    private static int xGridSize;
-    private static int yGridSize;
+    private static int xAreaSize;
+    private static int yAreaSize;
     private static int numberOfAreas;
     private static boolean isRemoved[];
     private static int minDistance = Integer.MAX_VALUE;
@@ -43,7 +40,7 @@ public class HalfTsp {
 
 
         cities = new ArrayList<>();
-
+        //READING THE INPUT
         try {
             inputFile = new File("example-input-3.txt");
 
@@ -74,17 +71,15 @@ public class HalfTsp {
 
             scanner.close();
         } catch (Exception e) {
-            System.out.println("File couldn't opened!");
+            System.out.println( inputFile.getName() + " couldn't opened!");
             System.exit(0);
         }
 
 
         numberOfCities = cities.size();  // Number of cities is found
-        halfNumberOfCities = (int) Math.ceil(numberOfCities / 2.0);
+        halfNumberOfCities = (int) Math.ceil(numberOfCities / 2.0); //We will visit only half of the given cities
 
-
-        numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2)); //Let's initialize number of areas per line by square root of n/2
-
+        numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2.0)); //Let's initialize number of areas per line by square root of n/2
 
         double standardDeviation = 0;
         int lowerLimit = 0;
@@ -96,7 +91,6 @@ public class HalfTsp {
         int[] currentRoute = null;
 
 
-
         final double STANDARD_FACTOR = 0.1;
         double stdFactor = 2;
         int decreaseArea = (int) Math.ceil(numberOfAreas * 0.01);
@@ -105,13 +99,13 @@ public class HalfTsp {
 
         /* Here we apply the nearest neighbor algorithm. Data is chosen by eliminating some of them.
          * In the first place, we divide our map into areas. As a beginning, we set the number of columns and number of rows
-         * as sqrt(n/2). Then we find sum of the number of cities for each areas. Then we find the standard deviation and eliminte the
+         * as sqrt(n/2). Then we find sum of the number of cities for each area. Then we find the standard deviation and eliminate the
          * average + standardFactor * standardDeviation, for example: average + 1.5standardDeviation
          * We try to find the best standardFactor and best division of areas for the given map.
          */
         while(stdFactor >= 1) { //Loop that controls the standard deviation factor
 
-            numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2));
+            numberOfAreas = (int)Math.round(Math.sqrt(numberOfCities/2.0));
             int processed = 0;
             int total = numberOfAreas;
             double progress = 0;
@@ -123,9 +117,11 @@ public class HalfTsp {
                 for (int i = 0; i < numberOfCities; i++)
                     isRemoved[i] = false;
 
-                xGridSize = (maxX - minX) / numberOfAreas + 1;
-                yGridSize = (maxY - minY) / numberOfAreas + 1;
-                areas = new ArrayList[numberOfAreas][numberOfAreas];
+                //We divide the map into areas. We find the length and width of those areas
+                xAreaSize = (maxX - minX) / numberOfAreas + 1;
+                yAreaSize = (maxY - minY) / numberOfAreas + 1;
+                areas = new ArrayList[numberOfAreas][numberOfAreas]; //Areas variable is 2D matrix. Those will represent the areas.
+
 
                 //Initialize the 2D array
                 for (int i = 0; i < numberOfAreas; i++) {
@@ -139,14 +135,14 @@ public class HalfTsp {
                     int xCoordinate = cities.get(i)[0];
                     int yCoordinate = cities.get(i)[1];
 
-                    int xIndex = xCoordinate / xGridSize;
-                    int yIndex = yCoordinate / yGridSize;
+                    int xIndex = xCoordinate / xAreaSize;
+                    int yIndex = yCoordinate / yAreaSize;
 
                     areas[xIndex][yIndex].add(i);
                 }
 
 
-                //Calculate the standard deviation
+                //Calculate the standard deviation of the areas
                 int mostIntense = 0;
                 double currentAverageDensity = (double) numberOfCities / (numberOfAreas * numberOfAreas);
                 double sumOfSquare = 0;
@@ -167,7 +163,7 @@ public class HalfTsp {
 
                 double currentStandardDeviation = Math.sqrt(sumOfSquare / numberOfCities);
 
-                int currentLowerLimit = (int) Math.floor(currentAverageDensity - stdFactor * currentStandardDeviation);
+                int currentLowerLimit = (int) Math.floor(currentAverageDensity - stdFactor * currentStandardDeviation); //Find the lower limit that each area must have
                 int currentNumberOfCityEliminated = 0;
 
 
@@ -186,22 +182,20 @@ public class HalfTsp {
 
                 double currentEliminatePercentage = ((double) currentNumberOfCityEliminated / numberOfCities) * 100;
 
-
                 if (currentEliminatePercentage >= 50) { //If we eliminate more than 50% of the data, then continue to next iteration
                     numberOfAreas--;
                     continue;
                 }
 
 
-                // Applying the nearest neighbor algorithm
+                //NEAREST NEIGHBOR ALGORITHM
                 currentRoute = new int[halfNumberOfCities];
 
 
-                //Choosing the first city and adding it into the route
+                //Choosing the first city is very important. We have a method to find the best starting city
                 int startingCity = findStartingCity(0, 0, numberOfAreas - 1, numberOfAreas - 1);
                 isRemoved[startingCity] = true;
                 currentRoute[0] = startingCity;
-
 
                 int currentDistance = 0;
 
@@ -213,9 +207,9 @@ public class HalfTsp {
                     currentRoute[i] = newCity; //Add the found city into the route array
                 }
 
-                currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Add the distance where we stop and where we begin
+                currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Add the distance between last and first cities that we visited
 
-                if (currentDistance < minDistance) {
+                if (currentDistance < minDistance) { //If we find a better solution, we update it
                     standardDeviation = currentStandardDeviation;
                     lowerLimit = currentLowerLimit;
                     averageDensity = currentAverageDensity;
@@ -226,7 +220,6 @@ public class HalfTsp {
 
                     route = currentRoute;
                 }
-
 
 
                 /*Decrease the number of areas by 1% of the sqrt(n/2).
@@ -242,7 +235,7 @@ public class HalfTsp {
                 }
 
 
-            } while (numberOfAreas > 0);
+            } while (numberOfAreas > 0); //Try all the possibilities for dividing the map
 
             counter++;
             stdFactor -= STANDARD_FACTOR; //Decrease the standard deviation factor by decrease factor
@@ -262,9 +255,15 @@ public class HalfTsp {
 
         System.out.println("\n\nOptimizing the results...");
         System.out.println("Applying the 2-opt algorithm...");
-        int opt2_Distance = Opt_3();
+        int opt2_Distance = Opt_2();
         System.out.println("\n2-opt optimized distance: " + opt2_Distance);
 
+        /* 3 opt
+        System.out.println("\n\nOptimizing the results...");
+        System.out.println("Applying the 3-opt algorithm...");
+        int opt3_Distance = Opt_3();
+        System.out.println("\n3-opt optimized distance: " + opt2_Distance);
+        */
 
         //PRINTING THE RESULTS TO FILE
         try {
@@ -292,7 +291,6 @@ public class HalfTsp {
 
 
 
-
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         long totalSeconds = timeElapsed / 1000;
@@ -310,9 +308,9 @@ public class HalfTsp {
         int x = cities.get(cityId)[0];
         int y = cities.get(cityId)[1];
 
-        //Find the city's area indices
-        int xIndex = x / xGridSize;
-        int yIndex = y / yGridSize;
+        //Determine which area the city belongs to
+        int xIndex = x / xAreaSize;
+        int yIndex = y / yAreaSize;
 
 
         int startingI = xIndex;
@@ -332,21 +330,23 @@ public class HalfTsp {
             nearestCityId = scanAreas(cityId, startingI, endingI, startingJ, endingJ);
         }
 
-        double minDistance = findDistance(cityId, nearestCityId);
+        double minDistance = findDistance(cityId, nearestCityId); //Find the distance between found city and given city
 
-        //Find the min grid size
+        /*Find the min grid size. We will search other nearest neighbor possibilities in particular areas.
+          We do not have to check all areas. This will save time.
+         */
         int minGridSize;
         int maxGridSize;
-        if(xGridSize < yGridSize) {
-            minGridSize = xGridSize;
-            maxGridSize = yGridSize;
+        if(xAreaSize < yAreaSize) {
+            minGridSize = xAreaSize;
+            maxGridSize = yAreaSize;
         }
         else {
-            minGridSize = yGridSize;
-            maxGridSize = xGridSize;
+            minGridSize = yAreaSize;
+            maxGridSize = xAreaSize;
         }
 
-        int numberOfLevel = (int) Math.ceil((maxGridSize + minDistance) / ((double) minGridSize)); //This represents how many level we should go out
+        int numberOfLevel = (int) Math.ceil((maxGridSize + minDistance) / ((double) minGridSize)); //This represents how many farther areas we should look for
 
         int newIndices[] = widenIndices(numberOfLevel, startingI, endingI, startingJ, endingJ);
         startingI = newIndices[0];
@@ -356,16 +356,16 @@ public class HalfTsp {
 
         int possibleNearestCityId = scanAreas(cityId, startingI, endingI, startingJ, endingJ);
 
-        if(possibleNearestCityId == -1)
+        if(possibleNearestCityId == -1) //Return the city id that we found first
             return nearestCityId;
-        else if(findDistance(cityId, possibleNearestCityId) < minDistance)
+        else if(findDistance(cityId, possibleNearestCityId) < minDistance) //Return the city id that we found second (which is nearer than the first)
             return possibleNearestCityId;
         else
             return nearestCityId;
 
-
     }
 
+    //Scan all the areas that is limited by coordinates to find the nearest city
     public static int scanAreas(int cityId, int startingI, int endingI, int startingJ, int endingJ){
 
         int x = cities.get(cityId)[0];
@@ -405,6 +405,7 @@ public class HalfTsp {
         return nearestCityId;
     }
 
+    //We widen our limit coordinates to search for more areas
     public static int[] widenIndices(int level, int startingX, int endingX, int startingY, int endingY){
 
         for(int i = 0; i < level; i++){
@@ -416,15 +417,14 @@ public class HalfTsp {
                 startingY--;
             if(endingY < numberOfAreas - 1)
                 endingY++;
-
         }
 
         int newIndices[] = {startingX, endingX, startingY, endingY};
 
-
         return newIndices;
     }
 
+    //Find the distance between two cities
     public static int findDistance(int city1, int city2){
 
         int x = cities.get(city1)[0];
@@ -436,16 +436,18 @@ public class HalfTsp {
         return (int) Math.round(Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y)));
     }
 
+    /*Find the starting city. We divide our map into 4 squares. Than we count sum of number of cities for each.
+      Then we call the function again to find the most dense area and best city recursively.
+     */
     public static int findStartingCity(int startingI, int startingJ, int endingI, int endingJ){
 
         int iDistance = endingI - startingI + 1;
         int jDistance = endingJ - startingJ + 1;
 
 
-        if(jDistance == 1 && iDistance == 1){
-
+        if(jDistance == 1 && iDistance == 1)
             return areas[startingI][startingJ].get(0); //Return the first city of the dentist area
-        }
+
 
         int area[] = new int[4];
 
@@ -471,7 +473,7 @@ public class HalfTsp {
         }
     }
 
-
+    //Find number of cities in a limited coordinates
     public static int findNumberOfCities(int startingX, int startingY, int endingX, int endingY){
 
         int totalNumberOfCities = 0;
@@ -486,6 +488,7 @@ public class HalfTsp {
         return totalNumberOfCities;
     }
 
+
     //Eliminate all the cities in the area
     public static void eliminateArea(int i, int j){
 
@@ -495,6 +498,7 @@ public class HalfTsp {
         }
 
     }
+
 
     public static int[] swap_2_Points(int [] currentRoute, int i, int j){
         int[] newRoute = new int[currentRoute.length];
@@ -558,6 +562,7 @@ public class HalfTsp {
         return minDistance;
     }
 
+
     public static int[] swap_3_Points_3(int [] currentRoute, int i, int j,int k){
         int[] newRoute = new int[currentRoute.length];
 
@@ -583,6 +588,7 @@ public class HalfTsp {
         return newRoute;
 
     }
+
 
     public static int[] swap_3_Points_1(int [] currentRoute, int i, int j,int k){
         int[] newRoute = new int[currentRoute.length];
@@ -635,7 +641,7 @@ public class HalfTsp {
         return newRoute;
     }
 
-    //erenin
+
     public static int[] swap_3_Points_4(int [] currentRoute, int i, int j,int k){
         int[] newRoute = new int[currentRoute.length];
 
@@ -660,8 +666,6 @@ public class HalfTsp {
 
         return newRoute;
     }
-
-
 
 
     public static int Opt_3() {
