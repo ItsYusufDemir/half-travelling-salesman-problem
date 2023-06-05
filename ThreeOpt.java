@@ -22,6 +22,8 @@ public class ThreeOpt {
     private static int[] route;
     private static int minDistance;
     private static FileWriter file;
+    private static long startTime;
+    private static double timerMinute = 10; //10 minutes
 
 
     public static void main(String args[]) throws IOException {
@@ -75,16 +77,20 @@ public class ThreeOpt {
         }
 
 
+
         System.out.println("Optimizing... Applying 3-opt algorithm...");
 
+
+        startTime = System.currentTimeMillis();
         int opt3Distance = Opt_3();
 
         System.out.println("\n3-opt optimized distance: " + opt3Distance);
+        System.out.println("\nRunnning Time (minute): " + timerMinute);
 
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt-" + opt3Distance + "-.txt");
+            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -113,6 +119,11 @@ public class ThreeOpt {
             for (int i = 1; i < route.length - 3; i++) {
                 for (int j = i + 1; j < route.length - 2; j++) {
                     for (int k = j + 1; k < route.length - 1; k++) {
+
+                        if((startTime + (timerMinute * 60 * 1000)) < System.currentTimeMillis()){
+                            return minDistance;
+                        }
+
                         if (previousI != i) {
                             System.out.println(i + "/" + route.length);
                             System.out.println("**" + minDistance);
@@ -267,8 +278,8 @@ public class ThreeOpt {
 
                             }
                         }
-
-                        route = tempRoute;
+                        if(tempRoute != null)
+                            route = tempRoute;
                     }
                 }
             }
