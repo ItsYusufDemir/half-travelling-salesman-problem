@@ -1,27 +1,38 @@
+/* Authors: Eren Duyuk - 150120509
+ *          Selin Aydın - 150120061
+ *          Yusuf Demir - 150120032
+ *
+ * Date: 31.05.2023 14:27
+ *
+ * Description: Solving the half travelling salesman problem. This problem is different than the normal tsp problem.
+ * Given n cities, we should find the best route by choosing n/2 cities.
+ */
+
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TwoOpt {
 
-    private static File inputFile;
-    private static File inputFile2;
+    private static File citiesFile;
+    private static File routeFile;
     private static ArrayList<int []> cities;
     private static int[] route;
     private static int minDistance;
+    private static FileWriter file;
 
 
-
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException {
 
 
         cities = new ArrayList<>();
 
         try {
-            inputFile = new File("example-input-3.txt");
+            citiesFile = new File("example-input-2.txt");
 
-            Scanner scanner = new Scanner(inputFile);
+            Scanner scanner = new Scanner(citiesFile);
 
             while (scanner.hasNext()) {
 
@@ -35,7 +46,7 @@ public class TwoOpt {
 
         }
             catch (Exception e) {
-                System.out.println( inputFile.getName() + " couldn't opened");
+                System.out.println( citiesFile.getName() + " couldn't opened");
                 System.exit(0);
             }
 
@@ -45,11 +56,10 @@ public class TwoOpt {
         route = new int[halfNumberOfCities];
 
 
-
         try {
-            inputFile2 = new File("example-input-3-processed.txt");
+            routeFile = new File("example-input-2-processed.txt");
 
-            Scanner scanner2 = new Scanner(inputFile2);
+            Scanner scanner2 = new Scanner(routeFile);
 
             minDistance = scanner2.nextInt();
 
@@ -62,27 +72,44 @@ public class TwoOpt {
             scanner2.close();
         }
         catch (Exception e) {
-            System.out.println(inputFile2.getName() + " couldn't opened!");
+            System.out.println(routeFile.getName() + " couldn't opened!");
             System.exit(0);
         }
 
 
+        System.out.println("Optimizing... Applying 2-opt algorithm...");
+
+        int opt2Distance = Opt_2();
+
+        System.out.println("\n2-opt optimized distance: " + opt2Distance);
 
 
+        //PRINTING THE RESULTS TO FILE
+        try {
+            file = new FileWriter(  citiesFile.getName().split("\\.")[0] + "-2opt-" + opt2Distance + "-.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
+        file.write(minDistance + "\n");
+        for(int i = 0; i < halfNumberOfCities; i++){
+            file.write(route[i] + "\n");
+        }
+        file.close();
 
     }
 
 
     public static int Opt_2() {
-        int newDistance = 0;
+        int newDistance = minDistance;
         int numberOfSwaps = 1;
         int temp;
         int[] newRoute;
 
         while (numberOfSwaps != 0) {
             numberOfSwaps = 0;
+            int previousI = 1;
             for (int i = 1; i < route.length - 2; i++) {
                 for (int j = i + 1; j < route.length - 1; j++) {
                     if (findDistance(route[i], route[i - 1]) + findDistance(route[j + 1],
@@ -91,28 +118,28 @@ public class TwoOpt {
 
                         newRoute = swap_2_Points(route,i,j);
 
-                        for(int k  = 0; k < route.length-1 ; k++){
-                            newDistance += findDistance(newRoute[k],newRoute[k+1]);
-                        }
-                        newDistance += findDistance(route[0], route[route.length -1]);
+                        newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[j + 1], route[j]);
+                        newDistance = newDistance + findDistance(route[i], route[j + 1]) + findDistance(route[i - 1], route[j]);
+
                         if (newDistance < minDistance) {
                             minDistance = newDistance;
                             route = newRoute;
                             numberOfSwaps++;
-                            //System.out.println("*" + minDistance);
-
                         }
+
+
                     }
-                    newDistance = 0;
+
+                    if(previousI != i) {
+                        System.out.println("Processing: " + (i + 1) + "/" + route.length);
+                        previousI = i;
+                    }
+                    newDistance = minDistance;
                 }
             }
         }
         return minDistance;
     }
-
-
-
-
 
 
 

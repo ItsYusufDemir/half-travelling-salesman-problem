@@ -253,17 +253,19 @@ public class HalfTsp {
         System.out.println("\nRoute distance: " + minDistance);
 
 
+        /*
         System.out.println("\n\nOptimizing the results...");
         System.out.println("Applying the 2-opt algorithm...");
         int opt2_Distance = Opt_2();
         System.out.println("\n2-opt optimized distance: " + opt2_Distance);
+        */
 
-        /* 3 opt
+
         System.out.println("\n\nOptimizing the results...");
         System.out.println("Applying the 3-opt algorithm...");
         int opt3_Distance = Opt_3();
-        System.out.println("\n3-opt optimized distance: " + opt2_Distance);
-        */
+        System.out.println("\n3-opt optimized distance: " + opt3_Distance);
+
 
         //PRINTING THE RESULTS TO FILE
         try {
@@ -678,15 +680,20 @@ public class HalfTsp {
 
         while (numberOfSwaps != 0) {
             numberOfSwaps = 0;
+            int previousI = 0;
             for (int i = 1; i < route.length - 3; i++) {
                 for (int j = i + 1; j < route.length - 2; j++) {
                     for (int k = j + 1; k < route.length - 1; k++) {
-                        System.out.println(i +"/" + route.length);
+                        if(previousI != i) {
+                            System.out.println(i + "/" + route.length);
+                            previousI = i;
+                        }
+
                         if (findDistance(route[j], route[j + 1]) + findDistance(route[k + 1],
                                 route[k]) >= findDistance(route[j], route[k]) + findDistance(
                                 route[j + 1], route[k + 1])) {
                             newDistance = minDistance;
-                            System.out.println("a");
+                            //System.out.println("a");
                             newRoute = swap_2_Points(route, j + 1, k);
 
 
@@ -709,7 +716,7 @@ public class HalfTsp {
                                 route[j + 1]) >= findDistance(route[j], route[i - 1]) + findDistance(
                                 route[j + 1], route[i])) {
                             newDistance = minDistance;
-                            System.out.println("b");
+                            //System.out.println("b");
 
                             newRoute = swap_2_Points(route, i, j);
 
@@ -732,7 +739,7 @@ public class HalfTsp {
                                 route[k]) >= findDistance(route[i - 1], route[k]) + findDistance(
                                 route[i], route[k + 1])) {
                             newDistance = minDistance;
-                           System.out.println("c");
+                           //System.out.println("c");
                             newRoute = swap_2_Points(route, i - 1, k + 1);
 
                             newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[k + 1],
@@ -753,7 +760,7 @@ public class HalfTsp {
                         if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
                                 route[j]) + findDistance(route[k + 1], route[k]) >=
                                 findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
-                            System.out.println("d");
+                            //System.out.println("d");
                             newDistance = minDistance;
                             newRoute = swap_3_Points_4(route,i,j,k);
 
@@ -774,7 +781,7 @@ public class HalfTsp {
                         if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
                                 route[j]) + findDistance(route[k + 1], route[k]) >=
                                 findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
-                            System.out.println("e");
+                            //System.out.println("e");
                             newDistance = minDistance;
                             newRoute = swap_3_Points_3(route,i,j,k);
 
@@ -797,7 +804,7 @@ public class HalfTsp {
                                 findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
                             newDistance = minDistance;
                             newRoute = swap_3_Points_1(route, i, j, k);
-                            System.out.println("g");
+                            //System.out.println("g");
                             count++;
                             newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                                     route[j]) - findDistance(route[k + 1], route[k]);
@@ -818,7 +825,7 @@ public class HalfTsp {
                                 findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
                             newDistance = minDistance;
                             newRoute = swap_3_Points_2(route, i,j, k);
-                            System.out.println("h");
+                            //System.out.println("h");
                             newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                                     route[j]) - findDistance(route[k + 1], route[k]);
                             newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1]);
