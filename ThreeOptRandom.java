@@ -22,6 +22,8 @@ public class ThreeOptRandom {
     private static int[] route;
     private static int minDistance;
     private static FileWriter file;
+    private static long startTime;
+    private static double timerMinute = 10;
 
 
     public static void main(String args[]) throws IOException {
@@ -75,16 +77,20 @@ public class ThreeOptRandom {
         }
 
 
+
         System.out.println("Optimizing... Applying 3-opt algorithm...");
 
+
+        startTime = System.currentTimeMillis();
         int opt3Distance = Opt_3();
 
         System.out.println("\n3-opt optimized distance: " + opt3Distance);
+        System.out.println("\nRunnning Time (minute): " + timerMinute);
 
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt-" + opt3Distance + "-.txt");
+            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt-random.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -107,172 +113,180 @@ public class ThreeOptRandom {
         int[] tempRoute = route;
         int count = 0;
 
-        while (numberOfSwaps != 0) {
-            numberOfSwaps = 0;
-            int previousI = 0;
-            for (int i = 1; i < route.length - 3; i++) {
-                for (int j = i + 1; j < route.length - 2; j++) {
-                    for (int k = j + 1; k < route.length - 1; k++) {
-                        if (previousI != i) {
-                            System.out.println(i + "/" + route.length);
-                            System.out.println("**" + minDistance);
-                            previousI = i;
-                        }
-
-                        if (findDistance(route[j], route[j + 1]) + findDistance(route[k + 1],
-                                route[k]) >= findDistance(route[j], route[k]) + findDistance(
-                                route[j + 1], route[k + 1])) {
-                            newDistance = minDistance;
-                            //System.out.println("a");
-                            newRoute = swap_2_Points(route, j + 1, k);
 
 
-                            newDistance = newDistance - findDistance(route[j], route[j + 1]) - findDistance(route[k + 1], route[k]);
-                            newDistance = newDistance + findDistance(route[j], route[k]) + findDistance(route[j + 1], route[k + 1]);
+        while((startTime + (timerMinute * 60 * 1000)) > System.currentTimeMillis()){
 
-                            if (newDistance < minDistance) {
+            int[] indices = selectIndices();
+            int i = indices[0];
+            int j = indices[1];
+            int k = indices[2];
 
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                               // System.out.println("**" + minDistance);
-
-                            }
-
-                        }
-
-
-                        if (findDistance(route[i], route[i - 1]) + findDistance(route[j],
-                                route[j + 1]) >= findDistance(route[j], route[i - 1]) + findDistance(
-                                route[j + 1], route[i])) {
-                            newDistance = minDistance;
-                            //System.out.println("b");
-
-                            newRoute = swap_2_Points(route, i, j);
-
-                            newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[j],
-                                    route[j + 1]);
-                            newDistance = newDistance + findDistance(route[j], route[i - 1]) + findDistance(
-                                    route[j + 1], route[i]);
-
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
-
-                            }
-                        }
+            if (findDistance(route[j], route[j + 1]) + findDistance(route[k + 1],
+                    route[k]) >= findDistance(route[j], route[k]) + findDistance(
+                    route[j + 1], route[k + 1])) {
+                newDistance = minDistance;
+                //System.out.println("a");
+                newRoute = swap_2_Points(route, j + 1, k);
 
 
-                        if (findDistance(route[i], route[i - 1]) + findDistance(route[k + 1],
-                                route[k]) >= findDistance(route[i - 1], route[k]) + findDistance(
-                                route[i], route[k + 1])) {
-                            newDistance = minDistance;
-                            //System.out.println("c");
-                            newRoute = swap_2_Points(route, i - 1, k + 1);
+                newDistance = newDistance - findDistance(route[j], route[j + 1]) - findDistance(route[k + 1], route[k]);
+                newDistance = newDistance + findDistance(route[j], route[k]) + findDistance(route[j + 1], route[k + 1]);
 
-                            newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[k + 1],
-                                    route[k]);
-                            newDistance = newDistance + findDistance(route[i - 1], route[k]) + findDistance(
-                                    route[i], route[k + 1]);
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
+                if (newDistance < minDistance) {
 
-                            }
-                        }
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                     System.out.println("**" + minDistance);
+
+                }
+
+            }
 
 
-                        //d
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
-                            //System.out.println("d");
-                            newDistance = minDistance;
-                            newRoute = swap_3_Points_4(route, i, j, k);
+            if (findDistance(route[i], route[i - 1]) + findDistance(route[j],
+                    route[j + 1]) >= findDistance(route[j], route[i - 1]) + findDistance(
+                    route[j + 1], route[i])) {
+                newDistance = minDistance;
+                //System.out.println("b");
 
-                            newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
-                                    route[j]) - findDistance(route[k + 1], route[k]);
-                            newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1]);
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
+                newRoute = swap_2_Points(route, i, j);
 
-                            }
-                        }
+                newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[j],
+                        route[j + 1]);
+                newDistance = newDistance + findDistance(route[j], route[i - 1]) + findDistance(
+                        route[j + 1], route[i]);
 
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
 
-                        //e
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
-                            //System.out.println("e");
-                            newDistance = minDistance;
-                            newRoute = swap_3_Points_3(route, i, j, k);
-
-                            newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
-                                    route[j]) - findDistance(route[k + 1], route[k]);
-                            newDistance = newDistance + findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1]);
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
-
-                            }
-                        }
-
-
-                        //g
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
-                            newDistance = minDistance;
-                            newRoute = swap_3_Points_1(route, i, j, k);
-                            //System.out.println("g");
-                            count++;
-                            newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
-                                    route[j]) - findDistance(route[k + 1], route[k]);
-                            newDistance = newDistance + findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i]);
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
-
-                            }
-                        }
-
-
-                        //h
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
-                            newDistance = minDistance;
-                            newRoute = swap_3_Points_2(route, i, j, k);
-                            //System.out.println("h");
-                            newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
-                                    route[j]) - findDistance(route[k + 1], route[k]);
-                            newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1]);
-                            if (newDistance < minDistance) {
-                                minDistance = newDistance;
-                                tempRoute = newRoute;
-                                numberOfSwaps++;
-                                //System.out.println("**" + minDistance);
-
-                            }
-                        }
-
-                        route = tempRoute;
-                    }
                 }
             }
+
+
+            if (findDistance(route[i], route[i - 1]) + findDistance(route[k + 1],
+                    route[k]) >= findDistance(route[i - 1], route[k]) + findDistance(
+                    route[i], route[k + 1])) {
+                newDistance = minDistance;
+                //System.out.println("c");
+                newRoute = swap_2_Points(route, i - 1, k + 1);
+
+                newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[k + 1],
+                        route[k]);
+                newDistance = newDistance + findDistance(route[i - 1], route[k]) + findDistance(
+                        route[i], route[k + 1]);
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
+
+                }
+            }
+
+
+            //d
+            if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
+                    route[j]) + findDistance(route[k + 1], route[k]) >=
+                    findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
+                //System.out.println("d");
+                newDistance = minDistance;
+                newRoute = swap_3_Points_4(route, i, j, k);
+
+                newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
+                        route[j]) - findDistance(route[k + 1], route[k]);
+                newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1]);
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
+
+                }
+            }
+
+
+            //e
+            if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
+                    route[j]) + findDistance(route[k + 1], route[k]) >=
+                    findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
+                //System.out.println("e");
+                newDistance = minDistance;
+                newRoute = swap_3_Points_3(route, i, j, k);
+
+                newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
+                        route[j]) - findDistance(route[k + 1], route[k]);
+                newDistance = newDistance + findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1]);
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
+
+                }
+            }
+
+
+            //g
+            if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
+                    route[j]) + findDistance(route[k + 1], route[k]) >=
+                    findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
+                newDistance = minDistance;
+                newRoute = swap_3_Points_1(route, i, j, k);
+                //System.out.println("g");
+                count++;
+                newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
+                        route[j]) - findDistance(route[k + 1], route[k]);
+                newDistance = newDistance + findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i]);
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
+
+                }
+            }
+
+
+            //h
+            if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
+                    route[j]) + findDistance(route[k + 1], route[k]) >=
+                    findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
+                newDistance = minDistance;
+                newRoute = swap_3_Points_2(route, i, j, k);
+                //System.out.println("h");
+                newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
+                        route[j]) - findDistance(route[k + 1], route[k]);
+                newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1]);
+                if (newDistance < minDistance) {
+                    minDistance = newDistance;
+                    tempRoute = newRoute;
+                    numberOfSwaps++;
+                    System.out.println("**" + minDistance);
+
+                }
+            }
+            if(tempRoute != null)
+                route = tempRoute;
+
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
         System.out.println("count " + count);
         return minDistance;
     }
@@ -414,5 +428,17 @@ public class ThreeOptRandom {
         }
 
         return newRoute;
+    }
+
+
+    public static int[] selectIndices(){
+
+        int i = (int) (Math.random() * (route.length - 5)) + 1;
+        int j = (int) (Math.random() * (route.length - i - 4)) + i + 1;
+        int k = (int) (Math.random() * (route.length - j - 3)) + j + 2;
+
+        int temp[] = {i,j,k};
+
+        return temp;
     }
 }

@@ -30,7 +30,7 @@ public class TwoOpt {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("example-input-2.txt");
+            citiesFile = new File("example-input-3.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -57,7 +57,7 @@ public class TwoOpt {
 
 
         try {
-            routeFile = new File("example-input-2-processed.txt");
+            routeFile = new File("example-input-3-processed.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 
@@ -86,7 +86,7 @@ public class TwoOpt {
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file = new FileWriter(  citiesFile.getName().split("\\.")[0] + "-2opt-" + opt2Distance + "-.txt");
+            file = new FileWriter(  citiesFile.getName().split("\\.")[0] + "-2opt.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
