@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ThreeOpt {
+public class ThreeOptRandom {
 
     private static File citiesFile;
     private static File routeFile;
