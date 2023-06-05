@@ -23,7 +23,7 @@ public class ThreeOpt {
     private static int minDistance;
     private static FileWriter file;
     private static long startTime;
-    private static double timerMinute = 10; //10 minutes
+    private static double timerMinute = 2; //10 minutes
 
 
     public static void main(String args[]) throws IOException {
