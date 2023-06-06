@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ThreeOptRandom {
@@ -23,7 +24,7 @@ public class ThreeOptRandom {
     private static int minDistance;
     private static FileWriter file;
     private static long startTime;
-    private static double timerMinute = 10;
+    private static double timerMinute = 0.25;
 
 
     public static void main(String args[]) throws IOException {
@@ -32,7 +33,7 @@ public class ThreeOptRandom {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("example-input-3.txt");
+            citiesFile = new File("example-input-2.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -51,6 +52,8 @@ public class ThreeOptRandom {
             System.exit(0);
         }
 
+
+
         int numberOfCities = cities.size();  // Number of cities is found
         int halfNumberOfCities = (int) Math.ceil(numberOfCities / 2.0);
 
@@ -58,7 +61,7 @@ public class ThreeOptRandom {
 
 
         try {
-            routeFile = new File("example-input-3-processed.txt");
+            routeFile = new File("example-input-2-processed.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 
@@ -82,10 +85,24 @@ public class ThreeOptRandom {
 
 
         startTime = System.currentTimeMillis();
-        int opt3Distance = Opt_3();
+
+        if(checkDuplicate(route)) {
+            System.out.println("Duplicate found in the beginngin");
+            System.exit(0);
+        }
+
+       int opt3Distance = Opt_3();
 
         System.out.println("\n3-opt optimized distance: " + opt3Distance);
         System.out.println("\nRunnning Time (minute): " + timerMinute);
+
+
+        int a  = 0;
+        for(int x = 0; x < route.length - 1; x++){
+            a += findDistance(route[x], route[x + 1]);
+        }
+        a += findDistance(route[0], route[route.length - 1]);
+        System.out.println("\n min distance " + a);
 
 
         //PRINTING THE RESULTS TO FILE
@@ -126,12 +143,31 @@ public class ThreeOptRandom {
                     route[k]) >= findDistance(route[j], route[k]) + findDistance(
                     route[j + 1], route[k + 1])) {
                 newDistance = minDistance;
-                //System.out.println("a");
+                System.out.println("a");
                 newRoute = swap_2_Points(route, j + 1, k);
+
+
 
 
                 newDistance = newDistance - findDistance(route[j], route[j + 1]) - findDistance(route[k + 1], route[k]);
                 newDistance = newDistance + findDistance(route[j], route[k]) + findDistance(route[j + 1], route[k + 1]);
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
 
                 if (newDistance < minDistance) {
 
@@ -149,14 +185,34 @@ public class ThreeOptRandom {
                     route[j + 1]) >= findDistance(route[j], route[i - 1]) + findDistance(
                     route[j + 1], route[i])) {
                 newDistance = minDistance;
-                //System.out.println("b");
+                System.out.println("b");
 
                 newRoute = swap_2_Points(route, i, j);
+
+
+
+
 
                 newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[j],
                         route[j + 1]);
                 newDistance = newDistance + findDistance(route[j], route[i - 1]) + findDistance(
                         route[j + 1], route[i]);
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
 
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
@@ -172,13 +228,36 @@ public class ThreeOptRandom {
                     route[k]) >= findDistance(route[i - 1], route[k]) + findDistance(
                     route[i], route[k + 1])) {
                 newDistance = minDistance;
-                //System.out.println("c");
+                System.out.println("c");
                 newRoute = swap_2_Points(route, i - 1, k + 1);
+
+
+
+
 
                 newDistance = newDistance - findDistance(route[i], route[i - 1]) - findDistance(route[k + 1],
                         route[k]);
                 newDistance = newDistance + findDistance(route[i - 1], route[k]) + findDistance(
                         route[i], route[k + 1]);
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
+
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
                     tempRoute = newRoute;
@@ -193,13 +272,38 @@ public class ThreeOptRandom {
             if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
                     route[j]) + findDistance(route[k + 1], route[k]) >=
                     findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
-                //System.out.println("d");
+                System.out.println("d");
                 newDistance = minDistance;
                 newRoute = swap_3_Points_4(route, i, j, k);
+
+
+
+
 
                 newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                         route[j]) - findDistance(route[k + 1], route[k]);
                 newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1]);
+
+
+
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
                     tempRoute = newRoute;
@@ -214,13 +318,35 @@ public class ThreeOptRandom {
             if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
                     route[j]) + findDistance(route[k + 1], route[k]) >=
                     findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
-                //System.out.println("e");
+                System.out.println("e");
                 newDistance = minDistance;
                 newRoute = swap_3_Points_3(route, i, j, k);
+
+
+
 
                 newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                         route[j]) - findDistance(route[k + 1], route[k]);
                 newDistance = newDistance + findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1]);
+
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
                     tempRoute = newRoute;
@@ -237,11 +363,34 @@ public class ThreeOptRandom {
                     findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
                 newDistance = minDistance;
                 newRoute = swap_3_Points_1(route, i, j, k);
-                //System.out.println("g");
+                System.out.println("g");
                 count++;
+
+
+
+
                 newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                         route[j]) - findDistance(route[k + 1], route[k]);
                 newDistance = newDistance + findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i]);
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
+
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
                     tempRoute = newRoute;
@@ -258,10 +407,34 @@ public class ThreeOptRandom {
                     findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
                 newDistance = minDistance;
                 newRoute = swap_3_Points_2(route, i, j, k);
-                //System.out.println("h");
+                System.out.println("h");
+
+
+
+
+
                 newDistance = newDistance - findDistance(route[i - 1], route[i]) - findDistance(route[j + 1],
                         route[j]) - findDistance(route[k + 1], route[k]);
                 newDistance = newDistance + findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1]);
+
+
+                if(route[route.length-1] != newRoute[route.length-1] || route[0] != newRoute[0]) {
+                    newDistance = newDistance - findDistance(route[0], route[route.length-1]) + findDistance(newRoute[0], newRoute[route.length-1]);
+                }
+
+
+                int a  = 0;
+                for(int x = 0; x < newRoute.length - 1; x++){
+                    a += findDistance(newRoute[x], newRoute[x + 1]);
+                }
+                a += findDistance(newRoute[0], newRoute[route.length - 1]);
+
+                if(newDistance != a)
+                    System.out.println("Unmatch");
+                else{
+                    System.out.println("Match");
+                }
+
                 if (newDistance < minDistance) {
                     minDistance = newDistance;
                     tempRoute = newRoute;
@@ -329,24 +502,31 @@ public class ThreeOptRandom {
     public static int[] swap_3_Points_3(int[] currentRoute, int i, int j, int k) {
         int[] newRoute = new int[currentRoute.length];
 
+        int index = 0;
         for (int a = 0; a <= i - 1; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
 
-        int index = 0;
+
         for (int a = j + 1; a <= k; a++) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = j; a >= i; a--) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = k + 1; a < currentRoute.length; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
+
+
+        if(checkDuplicate(newRoute))
+            System.out.println("Duplicate found in 3");
 
         return newRoute;
 
@@ -356,24 +536,29 @@ public class ThreeOptRandom {
     public static int[] swap_3_Points_1(int[] currentRoute, int i, int j, int k) {
         int[] newRoute = new int[currentRoute.length];
 
+        int index = 0;
         for (int a = 0; a <= i - 1; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
 
-        int index = 0;
         for (int a = k; a >= j + 1; a--) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = i; a <= j; a++) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = k + 1; a < currentRoute.length; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
+
+        if(checkDuplicate(newRoute))
+            System.out.println("Duplicate found in 1");
 
         return newRoute;
     }
@@ -382,24 +567,30 @@ public class ThreeOptRandom {
     public static int[] swap_3_Points_2(int[] currentRoute, int i, int j, int k) {
         int[] newRoute = new int[currentRoute.length];
 
+        int index = 0;
         for (int a = 0; a <= i - 1; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
 
-        int index = 0;
+
         for (int a = j + 1; a <= k; a++) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = i; a <= j; a++) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = k + 1; a < currentRoute.length; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
+
+        if(checkDuplicate(newRoute))
+            System.out.println("Duplicate found in 2");
 
         return newRoute;
     }
@@ -408,24 +599,30 @@ public class ThreeOptRandom {
     public static int[] swap_3_Points_4(int[] currentRoute, int i, int j, int k) {
         int[] newRoute = new int[currentRoute.length];
 
+        int index = 0;
         for (int a = 0; a <= i - 1; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
 
-        int index = 0;
-        for (int a = j; a <= i; a--) {
-            newRoute[i + index] = currentRoute[a];
+
+        for (int a = j; a >= i; a--) {
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = k; a >= j + 1; a--) {
-            newRoute[i + index] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
             index++;
         }
 
         for (int a = k + 1; a < currentRoute.length; a++) {
-            newRoute[a] = currentRoute[a];
+            newRoute[index] = currentRoute[a];
+            index++;
         }
+
+        if(checkDuplicate(newRoute))
+            System.out.println("Duplicate found in 4");
 
         return newRoute;
     }
@@ -440,5 +637,21 @@ public class ThreeOptRandom {
         int temp[] = {i,j,k};
 
         return temp;
+    }
+
+
+    public static boolean checkDuplicate(int[] array){
+
+        int arr[] = array.clone();
+
+        Arrays.sort(arr);
+        for(int i = 0; i < arr.length - 1; i++){
+            if(arr[i] == arr[i+1])
+                return true;
+        }
+
+        return false;
+
+
     }
 }
