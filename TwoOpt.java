@@ -22,6 +22,7 @@ public class TwoOpt {
     private static int[] route;
     private static int minDistance;
     private static FileWriter file;
+    private static int ROUTE_LENGTH = 0;
 
 
     public static void main(String args[]) throws IOException {
@@ -54,6 +55,7 @@ public class TwoOpt {
         int halfNumberOfCities = (int) Math.ceil(numberOfCities / 2.0);
 
         route = new int[halfNumberOfCities];
+        ROUTE_LENGTH = halfNumberOfCities;
 
 
         try {
@@ -110,8 +112,8 @@ public class TwoOpt {
         while (numberOfSwaps != 0) {
             numberOfSwaps = 0;
             int previousI = 1;
-            for (int i = 1; i < route.length - 2; i++) {
-                for (int j = i + 1; j < route.length - 1; j++) {
+            for (int i = 1; i < ROUTE_LENGTH - 2; i++) {
+                for (int j = i + 1; j < ROUTE_LENGTH - 1; j++) {
                     if (findDistance(route[i], route[i - 1]) + findDistance(route[j + 1],
                             route[j]) >= findDistance(route[i], route[j + 1]) + findDistance(
                             route[i - 1], route[j])) {
@@ -131,7 +133,7 @@ public class TwoOpt {
                     }
 
                     if(previousI != i) {
-                        System.out.println("Processing: " + (i + 1) + "/" + route.length);
+                        System.out.println("Processing: " + (i + 1) + "/" + ROUTE_LENGTH);
                         previousI = i;
                     }
                     newDistance = minDistance;
@@ -145,13 +147,13 @@ public class TwoOpt {
 
 
     public static int[] swap_2_Points(int [] currentRoute, int i, int j){
-        int[] newRoute = new int[currentRoute.length];
+        int[] newRoute = new int[ROUTE_LENGTH];
 
         for(int a = 0 ; a < i ; a++){
             newRoute[a] = currentRoute[a];
         }
 
-        for(int b = j+1 ; b < currentRoute.length ; b++){
+        for(int b = j+1 ; b < ROUTE_LENGTH ; b++){
             newRoute[b] = currentRoute[b];
         }
 
@@ -180,7 +182,7 @@ public class TwoOpt {
 
     //erenin
     public static int[] swap_3_Points_4(int [] currentRoute, int i, int j,int k){
-        int[] newRoute = new int[currentRoute.length];
+        int[] newRoute = new int[ROUTE_LENGTH];
 
         for(int a = 0 ; a <= i-1 ; a++){
             newRoute[a] = currentRoute[a];
@@ -197,7 +199,7 @@ public class TwoOpt {
             index++;
         }
 
-        for(int a = k+1 ; a<currentRoute.length ; a++ ){
+        for(int a = k+1 ; a<ROUTE_LENGTH ; a++ ){
             newRoute[a] = currentRoute[a];
         }
 
