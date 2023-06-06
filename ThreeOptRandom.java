@@ -24,7 +24,7 @@ public class ThreeOptRandom {
     private static int minDistance;
     private static FileWriter file;
     private static long startTime;
-    private static double timerMinute = 1;
+    private static double timerMinute = 2;
     private static int ROUTE_LENGTH = 0;
 
 
@@ -34,7 +34,7 @@ public class ThreeOptRandom {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("example-input-3.txt");
+            citiesFile = new File("50thousand.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -63,7 +63,7 @@ public class ThreeOptRandom {
 
 
         try {
-            routeFile = new File("example-input-3-processed.txt");
+            routeFile = new File("50thousand-processed.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 

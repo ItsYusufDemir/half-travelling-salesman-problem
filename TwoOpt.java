@@ -23,6 +23,8 @@ public class TwoOpt {
     private static int minDistance;
     private static FileWriter file;
     private static int ROUTE_LENGTH = 0;
+    private static double timerMinute = 30;
+    private static long startTime;
 
 
     public static void main(String args[]) throws IOException {
@@ -31,7 +33,7 @@ public class TwoOpt {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("example-input-3.txt");
+            citiesFile = new File("50thousand.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -59,7 +61,7 @@ public class TwoOpt {
 
 
         try {
-            routeFile = new File("example-input-3-processed.txt");
+            routeFile = new File("50thousand-processed.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 
@@ -81,6 +83,7 @@ public class TwoOpt {
 
         System.out.println("Optimizing... Applying 2-opt algorithm...");
 
+        startTime = System.currentTimeMillis();
         int opt2Distance = Opt_2();
 
         System.out.println("\n2-opt optimized distance: " + opt2Distance);
@@ -109,7 +112,7 @@ public class TwoOpt {
         int temp;
         int[] newRoute;
 
-        while (numberOfSwaps != 0) {
+        while (numberOfSwaps != 0 && (startTime + (timerMinute * 60 * 1000)) > System.currentTimeMillis()) {
             numberOfSwaps = 0;
             int previousI = 1;
             for (int i = 1; i < ROUTE_LENGTH - 2; i++) {
