@@ -42,7 +42,7 @@ public class HalfTsp {
         cities = new ArrayList<>();
         //READING THE INPUT
         try {
-            inputFile = new File("example-input-3.txt");
+            inputFile = new File("example-input-2.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
