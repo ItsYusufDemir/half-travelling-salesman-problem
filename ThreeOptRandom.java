@@ -102,7 +102,7 @@ public class ThreeOptRandom {
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt-random.txt");
+            file = new FileWriter(citiesFile.getName().split("\\.")[0] + "-3opt-random-" + minDistance + "-" + ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

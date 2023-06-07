@@ -257,7 +257,7 @@ public class ProcessHalfTsp {
 
         //PRINTING THE RESULTS TO FILE
         try {
-            file2 = new FileWriter(inputFile.getName().split("\\.")[0] + "-processed.txt");
+            file2 = new FileWriter(inputFile.getName().split("\\.")[0] + "-processed-" + stdFactor + ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
