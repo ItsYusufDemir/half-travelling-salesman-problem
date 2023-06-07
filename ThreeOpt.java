@@ -121,8 +121,8 @@ public class ThreeOpt {
                 for (int j = i + 1; j < ROUTE_LENGTH - 2; j++) {
                     for (int k = j + 1; k < ROUTE_LENGTH - 1; k++) {
 
-                        if((startTime + (timerMinute * 60 * 1000)) < System.currentTimeMillis()){
-                            return minDistance;
+                        if ((startTime + (timerMinute * 60 * 1000)) < System.currentTimeMillis()) {
+                            return minDistance; // Return the current minimum distance if time limit exceeded
                         }
 
                         if (previousI != i) {
@@ -131,33 +131,26 @@ public class ThreeOpt {
                             previousI = i;
                         }
 
-                        //a
-                        if (findDistance(route[j], route[j + 1]) + findDistance(route[k + 1],
-                                route[k]) >= findDistance(route[j], route[k]) + findDistance(
-                                route[j + 1], route[k + 1])) {
+                        // Swap 2 points: a
+                        if (findDistance(route[j], route[j + 1]) + findDistance(route[k + 1], route[k]) >=
+                                findDistance(route[j], route[k]) + findDistance(route[j + 1], route[k + 1])) {
 
                             newRoute = swap_2_Points(route, j + 1, k);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
-
                                 minDistance = newDistance;
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
-
                         }
 
-                        //b
-                        if (findDistance(route[i], route[i - 1]) + findDistance(route[j],
-                                route[j + 1]) >= findDistance(route[j], route[i - 1]) + findDistance(
-                                route[j + 1], route[i])) {
+                        // Swap 2 points: b
+                        if (findDistance(route[i], route[i - 1]) + findDistance(route[j], route[j + 1]) >=
+                                findDistance(route[j], route[i - 1]) + findDistance(route[j + 1], route[i])) {
 
                             newRoute = swap_2_Points(route, i, j);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -165,18 +158,14 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-                        //c
-                        if (findDistance(route[i], route[i - 1]) + findDistance(route[k + 1],
-                                route[k]) >= findDistance(route[i - 1], route[k]) + findDistance(
-                                route[i], route[k + 1])) {
-
+                        // Swap 2 points: c
+                        if (findDistance(route[i], route[i - 1]) + findDistance(route[k + 1], route[k]) >=
+                                findDistance(route[i - 1], route[k]) + findDistance(route[i], route[k + 1])) {
 
                             newRoute = swap_2_Points(route, i - 1, k + 1);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -184,19 +173,15 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-
-                        //d
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k]) + findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
-
+                        // Swap 3 points: d
+                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1], route[j]) +
+                                findDistance(route[k + 1], route[k]) >= findDistance(route[i], route[k]) +
+                                findDistance(route[i - 1], route[j]) + findDistance(route[j + 1], route[k + 1])) {
 
                             newRoute = swap_3_Points_4(route, i, j, k);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -204,19 +189,15 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-
-                        //e
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k + 1]) + findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
-
+                        // Swap 3 points: e
+                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1], route[j]) +
+                                findDistance(route[k + 1], route[k]) >= findDistance(route[i], route[k + 1]) +
+                                findDistance(route[k], route[j]) + findDistance(route[j + 1], route[i - 1])) {
 
                             newRoute = swap_3_Points_3(route, i, j, k);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -224,18 +205,15 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-
-                        //g
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[j], route[k + 1]) + findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
+                        // Swap 3 points: g
+                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1], route[j]) +
+                                findDistance(route[k + 1], route[k]) >= findDistance(route[j], route[k + 1]) +
+                                findDistance(route[k], route[i - 1]) + findDistance(route[j + 1], route[i])) {
 
                             newRoute = swap_3_Points_1(route, i, j, k);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -243,18 +221,15 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-
-                        //h
-                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1],
-                                route[j]) + findDistance(route[k + 1], route[k]) >=
-                                findDistance(route[i], route[k]) + findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
+                        // Swap 3 points: h
+                        if (findDistance(route[i - 1], route[i]) + findDistance(route[j + 1], route[j]) +
+                                findDistance(route[k + 1], route[k]) >= findDistance(route[i], route[k]) +
+                                findDistance(route[j], route[k + 1]) + findDistance(route[j + 1], route[i - 1])) {
 
                             newRoute = swap_3_Points_2(route, i, j, k);
-
                             newDistance = findTotalDistance(newRoute);
 
                             if (newDistance < minDistance) {
@@ -262,14 +237,10 @@ public class ThreeOpt {
                                 tempRoute = newRoute;
                                 numberOfSwaps++;
                                 System.out.println("**" + minDistance);
-
                             }
                         }
 
-
-
-
-                        if(tempRoute != null)
+                        if (tempRoute != null)
                             route = tempRoute;
                     }
                 }
@@ -280,30 +251,32 @@ public class ThreeOpt {
     }
 
 
+
     public static int[] swap_2_Points(int[] currentRoute, int i, int j) {
         int[] newRoute = new int[ROUTE_LENGTH];
 
+        // Copy elements before index i from currentRoute to newRoute
         for (int a = 0; a < i; a++) {
             newRoute[a] = currentRoute[a];
         }
 
+        // Copy elements after index j from currentRoute to newRoute
         for (int b = j + 1; b < ROUTE_LENGTH; b++) {
             newRoute[b] = currentRoute[b];
         }
 
         int reverse = 0;
+        // Reverse the order of elements between index i and j from currentRoute and copy them to newRoute
         for (int c = i; c <= j; c++) {
             newRoute[c] = currentRoute[j - reverse];
             reverse++;
         }
-
 
         return newRoute;
     }
 
 
     public static int findDistance(int city1, int city2) {
-
         int x = cities.get(city1)[0];
         int y = cities.get(city1)[1];
 
@@ -313,34 +286,35 @@ public class ThreeOpt {
         return (int) Math.round(Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y)));
     }
 
-
     public static int[] swap_3_Points_3(int[] currentRoute, int i, int j, int k) {
         int[] newRoute = new int[ROUTE_LENGTH];
 
         int index = 0;
+        // Copy elements before index i from currentRoute to newRoute
         for (int a = 0; a <= i - 1; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
-
+        // Copy elements between index j+1 and k from currentRoute to newRoute
         for (int a = j + 1; a <= k; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements in reverse order between index i and j from currentRoute to newRoute
         for (int a = j; a >= i; a--) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements after index k from currentRoute to newRoute
         for (int a = k + 1; a < ROUTE_LENGTH; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
         return newRoute;
-
     }
 
 
@@ -348,21 +322,25 @@ public class ThreeOpt {
         int[] newRoute = new int[ROUTE_LENGTH];
 
         int index = 0;
+        // Copy elements before index i from currentRoute to newRoute
         for (int a = 0; a <= i - 1; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements in reverse order between index k and j+1 from currentRoute to newRoute
         for (int a = k; a >= j + 1; a--) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements between index i and j from currentRoute to newRoute
         for (int a = i; a <= j; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements after index k from currentRoute to newRoute
         for (int a = k + 1; a < ROUTE_LENGTH; a++) {
             newRoute[index] = currentRoute[a];
             index++;
@@ -376,22 +354,25 @@ public class ThreeOpt {
         int[] newRoute = new int[ROUTE_LENGTH];
 
         int index = 0;
+        // Copy elements before index i from currentRoute to newRoute
         for (int a = 0; a <= i - 1; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
-
+        // Copy elements between index j+1 and k from currentRoute to newRoute
         for (int a = j + 1; a <= k; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements between index i and j from currentRoute to newRoute
         for (int a = i; a <= j; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements after index k from currentRoute to newRoute
         for (int a = k + 1; a < ROUTE_LENGTH; a++) {
             newRoute[index] = currentRoute[a];
             index++;
@@ -405,22 +386,25 @@ public class ThreeOpt {
         int[] newRoute = new int[ROUTE_LENGTH];
 
         int index = 0;
+        // Copy elements before index i from currentRoute to newRoute
         for (int a = 0; a <= i - 1; a++) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
-
+        // Copy elements in reverse order between index i and j from currentRoute to newRoute
         for (int a = j; a >= i; a--) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements in reverse order between index k and j+1 from currentRoute to newRoute
         for (int a = k; a >= j + 1; a--) {
             newRoute[index] = currentRoute[a];
             index++;
         }
 
+        // Copy elements after index k from currentRoute to newRoute
         for (int a = k + 1; a < ROUTE_LENGTH; a++) {
             newRoute[index] = currentRoute[a];
             index++;
@@ -431,8 +415,8 @@ public class ThreeOpt {
 
 
     public static int findTotalDistance(int[] newRoute){
-
         int newDistance = 0;
+        // Calculate the total distance of the newRoute
         for(int a  = 0; a < ROUTE_LENGTH-1 ; a++){
             newDistance += findDistance(newRoute[a],newRoute[a+1]);
         }
