@@ -20,7 +20,7 @@ public class TwoOpt {
     private static File routeFile;
     private static ArrayList<int []> cities;
     private static int[] route;
-    private static int minDistance;
+    private static long minDistance;
     private static FileWriter file;
     private static int ROUTE_LENGTH = 0;
     private static double timerMinute = 30;
@@ -33,7 +33,7 @@ public class TwoOpt {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("50thousand.txt");
+            citiesFile = new File("test-input-3.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -61,7 +61,7 @@ public class TwoOpt {
 
 
         try {
-            routeFile = new File("50thousand-processed.txt");
+            routeFile = new File("test-input-3-processed-std_factor-0.1.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 
@@ -84,7 +84,7 @@ public class TwoOpt {
         System.out.println("Optimizing... Applying 2-opt algorithm...");
 
         startTime = System.currentTimeMillis();
-        int opt2Distance = Opt_2();
+        long opt2Distance = Opt_2();
 
         System.out.println("\n2-opt optimized distance: " + opt2Distance);
 
@@ -106,8 +106,8 @@ public class TwoOpt {
     }
 
 
-    public static int Opt_2() {
-        int newDistance = minDistance;
+    public static long Opt_2() {
+        long newDistance = minDistance;
         int numberOfSwaps = 1;
         int temp;
         int[] newRoute;
@@ -171,42 +171,15 @@ public class TwoOpt {
     }
 
 
-    public static int findDistance(int city1, int city2){
+    public static long findDistance(int city1, int city2){
 
-        int x = cities.get(city1)[0];
-        int y = cities.get(city1)[1];
+        long x = cities.get(city1)[0];
+        long y = cities.get(city1)[1];
 
-        int x1 = cities.get(city2)[0];
-        int y1 = cities.get(city2)[1];
+        long x1 = cities.get(city2)[0];
+        long y1 = cities.get(city2)[1];
 
-        return (int) Math.round(Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y)));
-    }
-
-
-    //erenin
-    public static int[] swap_3_Points_4(int [] currentRoute, int i, int j,int k){
-        int[] newRoute = new int[ROUTE_LENGTH];
-
-        for(int a = 0 ; a <= i-1 ; a++){
-            newRoute[a] = currentRoute[a];
-        }
-
-        int index = 0;
-        for(int a = j ; a <= i ; a--){
-            newRoute[i+index] = currentRoute[a];
-            index++;
-        }
-
-        for(int a = k ; a >= j + 1 ; a--){
-            newRoute[i+index] = currentRoute[a];
-            index++;
-        }
-
-        for(int a = k+1 ; a<ROUTE_LENGTH ; a++ ){
-            newRoute[a] = currentRoute[a];
-        }
-
-        return newRoute;
+        return (long) Math.round(Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y)));
     }
 
 }
