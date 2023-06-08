@@ -10,6 +10,7 @@
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ProcessHalfTsp {
@@ -29,7 +30,7 @@ public class ProcessHalfTsp {
     private static int yAreaSize;
     private static int numberOfAreas;
     private static boolean isRemoved[];
-    private static int minDistance = Integer.MAX_VALUE;
+    private static long minDistance = Long.MAX_VALUE;
     private static int[] route;
 
 
@@ -42,7 +43,7 @@ public class ProcessHalfTsp {
         cities = new ArrayList<>();
         //READING THE INPUT
         try {
-            inputFile = new File("50thousand.txt");
+            inputFile = new File("test-input-3.txt");
 
             Scanner scanner = new Scanner(inputFile);
 
@@ -74,6 +75,8 @@ public class ProcessHalfTsp {
             System.out.println( inputFile.getName() + " couldn't opened!");
             System.exit(0);
         }
+
+
 
 
         numberOfCities = cities.size();  // Number of cities is found
@@ -197,7 +200,8 @@ public class ProcessHalfTsp {
                 isRemoved[startingCity] = true;
                 currentRoute[0] = startingCity;
 
-                int currentDistance = 0;
+
+                long currentDistance = 0;
 
                 for (int i = 1; i < halfNumberOfCities; i++) {
                     int newCity = findNearestNeighbor(startingCity);
@@ -208,6 +212,7 @@ public class ProcessHalfTsp {
                 }
 
                 currentDistance += findDistance(currentRoute[0], currentRoute[halfNumberOfCities - 1]); //Add the distance between last and first cities that we visited
+
 
                 if (currentDistance < minDistance) { //If we find a better solution, we update it
                     standardDeviation = currentStandardDeviation;
@@ -241,6 +246,7 @@ public class ProcessHalfTsp {
             stdFactor -= STANDARD_FACTOR; //Decrease the standard deviation factor by decrease factor
         }
 
+
         System.out.println("Best route is found.\n");
 
         System.out.println("Input Data Statistics: ");
@@ -254,10 +260,9 @@ public class ProcessHalfTsp {
 
 
 
-
         //PRINTING THE RESULTS TO FILE
         try {
-            file2 = new FileWriter(inputFile.getName().split("\\.")[0] + "-processed-" + stdFactor + ".txt");
+            file2 = new FileWriter(inputFile.getName().split("\\.")[0] + "-processed-std_factor-" + ((int)(STANDARD_FACTOR * 100))/100.0 + ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -415,15 +420,17 @@ public class ProcessHalfTsp {
     }
 
     //Find the distance between two cities
-    public static int findDistance(int city1, int city2){
+    public static long findDistance(int city1, int city2){
 
-        int x = cities.get(city1)[0];
-        int y = cities.get(city1)[1];
+        long x = cities.get(city1)[0];
+        long y = cities.get(city1)[1];
 
-        int x1 = cities.get(city2)[0];
-        int y1 = cities.get(city2)[1];
+        long x1 = cities.get(city2)[0];
+        long y1 = cities.get(city2)[1];
 
-        return (int) Math.round(Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y)));
+        long result = (long) Math.round(Math.sqrt((x1-x)*(x1-x) + (y1-y)*(y1-y)));
+
+        return result;
     }
 
     /*Find the starting city. We divide our map into 4 squares. Than we count sum of number of cities for each.
@@ -487,6 +494,35 @@ public class ProcessHalfTsp {
             isRemoved[areas[i][j].get(a)] = true;
         }
 
+    }
+
+
+    public static boolean checkDuplicate(int[] array){
+
+        int arr[] = array.clone();
+
+        Arrays.sort(arr);
+        for(int i = 0; i < arr.length - 1; i++){
+            if(arr[i] == arr[i+1])
+                return true;
+        }
+
+        return false;
+
+
+    }
+
+    public static long findTotalDistance(int[] newRoute){
+
+        long newDistance = 0;
+        newDistance += findDistance(newRoute[0], newRoute[newRoute.length -1]);
+        for(int a  = 0; a < (newRoute.length-1) ; a++){
+            long c = findDistance(newRoute[a],newRoute[a+1]);
+            newDistance += c;
+        }
+        newDistance += findDistance(newRoute[0], newRoute[newRoute.length -1]);
+
+        return newDistance;
     }
 
 }

@@ -21,10 +21,10 @@ public class ThreeOptRandom {
     private static File routeFile;
     private static ArrayList<int[]> cities;
     private static int[] route;
-    private static int minDistance;
+    private static long minDistance;
     private static FileWriter file;
     private static long startTime;
-    private static double timerMinute = 2;
+    private static double timerMinute = 1;
     private static int ROUTE_LENGTH = 0;
 
 
@@ -34,7 +34,7 @@ public class ThreeOptRandom {
         cities = new ArrayList<>();
 
         try {
-            citiesFile = new File("50thousand.txt");
+            citiesFile = new File("test-input-3.txt");
 
             Scanner scanner = new Scanner(citiesFile);
 
@@ -63,7 +63,7 @@ public class ThreeOptRandom {
 
 
         try {
-            routeFile = new File("50thousand-processed.txt");
+            routeFile = new File("test-input-3-processed-std_factor-0.1.txt");
 
             Scanner scanner2 = new Scanner(routeFile);
 
@@ -94,7 +94,7 @@ public class ThreeOptRandom {
         }
 
 
-       int opt3Distance = Opt_3();
+       long opt3Distance = Opt_3();
         System.out.println("\n3-opt optimized distance: " + opt3Distance);
         System.out.println("\nRunning Time (minute): " + timerMinute);
 
@@ -117,10 +117,10 @@ public class ThreeOptRandom {
     }
 
 
-    public static int Opt_3() {
+    public static long Opt_3() {
         int numberOfSwaps = 1;
-        int newDistance = minDistance;
-        int tempDistance = 0;
+        long newDistance = minDistance;
+        long tempDistance = 0;
         int[] newRoute;
         int[] tempRoute = route;
         int count = 0;
@@ -299,15 +299,15 @@ public class ThreeOptRandom {
     }
 
 
-    public static int findDistance(int city1, int city2) {
+    public static long findDistance(int city1, int city2) {
 
-        int x = cities.get(city1)[0];
-        int y = cities.get(city1)[1];
+        long x = cities.get(city1)[0];
+        long y = cities.get(city1)[1];
 
-        int x1 = cities.get(city2)[0];
-        int y1 = cities.get(city2)[1];
+        long x1 = cities.get(city2)[0];
+        long y1 = cities.get(city2)[1];
 
-        return (int) Math.round(Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y)));
+        return (long) Math.round(Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y)));
     }
 
 
@@ -455,9 +455,9 @@ public class ThreeOptRandom {
     }
 
 
-    public static int findTotalDistance(int[] newRoute){
+    public static long findTotalDistance(int[] newRoute){
 
-        int newDistance = 0;
+        long newDistance = 0;
         for(int a  = 0; a < (ROUTE_LENGTH-1) ; a++){
             newDistance += findDistance(newRoute[a],newRoute[a+1]);
         }
