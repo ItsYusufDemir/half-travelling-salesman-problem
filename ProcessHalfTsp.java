@@ -94,7 +94,7 @@ public class ProcessHalfTsp {
         int[] currentRoute = null;
 
 
-        final double STANDARD_FACTOR = 0.1;
+        final double STANDARD_FACTOR = 0.01;
         double stdFactor = 2;
         int decreaseArea = (int) Math.ceil(numberOfAreas * 0.01);
         int counter = 0;
