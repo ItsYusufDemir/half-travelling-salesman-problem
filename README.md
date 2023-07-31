@@ -33,7 +33,8 @@ After dividing the map, we find each area’s total number of cities. Then, we f
 
 Another problem is that initial number of areas might not be suitable for given data. Therefore, we have another inner loop that decreases the number of aeras by 1. (If we do not have enough time, we might decrease by larger numbers) At the end, we find the route with minimum distance thanks to nearest neighbor algorithm. But, before we start the nearest neighbor algorithm, we need to find the starting city. Starting city is very important, we must select the city from the densest area. To do that, we divide the map into 4 squares, Then, we select the square with maximum total number of cities. We do it recursively and find the best city.
 
-![2](https://github.com/ItsYusufDemir/half-travelling-salesman-problem/assets/104091838/a816b57e-2e62-4273-9554-1c444454abe8)
+![2](https://github.com/ItsYusufDemir/half-travelling-salesman-problem/assets/104091838/04fe233d-083a-407f-bcbf-f9751c815759)
+
 
 
 Nearest neighbor algorithm is the easiest way to solve the problem with good enough result. As we stated above, we will also do an optimization after finding a route by nearest neighbor algorithm. Now, let’s talk about this algorithm. We will take advantage of dividing the map into areas. In this first place, we try to find the nearest neighbor in the same area of given city. If we do not find it, then we go one level outer, we search for the nearest neighbor in those areas. If we do not find it, then we go one level outer again and again. If we find it in a level, we find the distance and then we also search for the areas that are far away by that distance from the given city.
